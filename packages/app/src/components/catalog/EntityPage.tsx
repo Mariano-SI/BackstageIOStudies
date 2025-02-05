@@ -61,6 +61,7 @@ import {
 
 import { EntityGithubPullRequestsContent } from '@roadiehq/backstage-plugin-github-pull-requests';
 import { EntityGithubPullRequestsOverviewCard } from '@roadiehq/backstage-plugin-github-pull-requests';
+import { PluginComoComponente } from '@internal/backstage-plugin-plugin-como-componente';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -347,7 +348,7 @@ const systemPage = (
       <Grid container spacing={3} alignItems="stretch">
         {entityWarningContent}
         <Grid item md={6}>
-          <EntityAboutCard variant="gridItem" />
+            <PluginComoComponente/>
         </Grid>
         <Grid item md={6} xs={12}>
           <EntityCatalogGraphCard variant="gridItem" height={400} />

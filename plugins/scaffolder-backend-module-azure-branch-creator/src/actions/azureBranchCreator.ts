@@ -9,11 +9,11 @@ import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
  *
  * @public
  */
-export function createAzureBranchCreatorAction() {
+export function createAzureBranchesAction() {
   return createTemplateAction<{
     organization: string;
     project: string;
-    repositoryId: string;
+    repository: string;
     branchNames: string[];
   }>({
     id: 'azure-repos:branches:create',
@@ -21,18 +21,27 @@ export function createAzureBranchCreatorAction() {
     schema: {
       input: {
         type: 'object',
-        required: ['organization', 'project', 'repositoryId', 'branchNames'],
+        required: ['organization', 'project', 'repository', 'branchNames'],
         properties: {
           organization: { type: 'string' },
           project: { type: 'string' },
-          repositoryId: { type: 'string' },
+          repository: { type: 'string' },
           branchNames: { type: 'array', items: { type: 'string' } },
         },
       },
     },
     async handler(ctx) {
       ctx.logger.info(
-        `Running example template with parameters: ${ctx.input}`,
+        `Branches: ${ctx.input.branchNames}`,
+      );
+      ctx.logger.info(
+        `Organization: ${ctx.input.organization}`,
+      );
+      ctx.logger.info(
+        `Repository : ${ctx.input.repository}`,
+      );
+      ctx.logger.info(
+        `Project: ${ctx.input.project}`,
       );
     },
   });

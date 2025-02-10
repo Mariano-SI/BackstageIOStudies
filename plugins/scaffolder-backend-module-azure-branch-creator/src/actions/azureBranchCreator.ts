@@ -34,24 +34,23 @@ export function createAzureBranchesAction() {
     async handler(ctx) {
       const { organization, project, repository, branchNames } = ctx.input;
       const azureRefsUrl = `/${organization}/${project}/_apis/git/repositories/${repository}/refs?api-version=7.1`;
-
-      const baseBranchResponse = await api.get(azureRefsUrl, {
-        params: {
-          filter: 'heads',
-        },
-      });
-
-      const baseBranchId = baseBranchResponse.data.value[0].objectId;
-
-      const formattedBranches = branchNames.map((branchName) => {
-        return {
-          name: `refs/heads/${branchName}`,
-          oldObjectId: '0000000000000000000000000000000000000000',
-          newObjectId: baseBranchId,
-        }
-      });
-
       try {
+          const baseBranchResponse = await api.get(azureRefsUrl, {
+            params: {
+              filter: 'heads',
+            },
+          });
+    
+          const baseBranchId = baseBranchResponse.data.value[0].objectId;
+    
+          const formattedBranches = branchNames.map((branchName) => {
+            return {
+              name: `refs/heads/${branchName}`,
+              oldObjectId: '0000000000000000000000000000000000000000',
+              newObjectId: baseBranchId,
+            }
+          });
+
           await api.post(azureRefsUrl, formattedBranches);
       } catch (error) {
         ctx.logger.error(`Failed to create branches: ${error}`);

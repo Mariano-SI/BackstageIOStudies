@@ -1,4 +1,4 @@
-import { createExampleAction } from './example';
+import { createExampleAction } from './azureBranchCreator';
 import {createMockActionContext} from '@backstage/plugin-scaffolder-node-test-utils'
 
 describe('createExampleAction', () => {

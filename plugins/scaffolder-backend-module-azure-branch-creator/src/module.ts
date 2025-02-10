@@ -1,6 +1,6 @@
 import { createBackendModule } from "@backstage/backend-plugin-api";
 import { scaffolderActionsExtensionPoint  } from '@backstage/plugin-scaffolder-node/alpha';
-import { createExampleAction } from "./actions/example";
+import { createAzureBranchCreatorAction } from "./actions/azureBranchCreator";
 
 /**
  * A backend module that registers the action into the scaffolder
@@ -14,7 +14,7 @@ export const scaffolderModule = createBackendModule({
         scaffolderActions: scaffolderActionsExtensionPoint
       },
       async init({ scaffolderActions}) {
-        scaffolderActions.addActions(createExampleAction());
+        scaffolderActions.addActions(createAzureBranchCreatorAction());
       }
     });
   },

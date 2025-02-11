@@ -1,0 +1,76 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Applications API",
+      "version": "1.0.0",
+      "description": "API for application management developed in the second backstage challenge"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:7007/api/applications"
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "summary": "List all applications",
+          "responses": {
+            "200": {
+              "description": "List all applications registered in the database",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ApplicationName": {
+                          "type": "string"
+                        },
+                        "Technology": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Register a new application",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ApplicationName": {
+                      "type": "string"
+                    },
+                    "Technology": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Application created successfully"
+            },
+            "409": {
+              "description": "Existing application"
+            },
+            "400": {
+              "description": "Invalid body formatting"
+            }
+          }
+        }
+      }
+    }
+  }
+  

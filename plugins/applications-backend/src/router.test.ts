@@ -1,67 +1,74 @@
 import {
-  mockCredentials,
   mockErrorHandler,
-  mockServices,
 } from '@backstage/backend-test-utils';
 import express from 'express';
 import request from 'supertest';
 
 import { createRouter } from './router';
-import { TodoListService } from './services/TodoListService/types';
+import {ApplicationService } from './services/ApplicationServices/types';
 
-const mockTodoItem = {
-  title: 'Do the thing',
-  id: '123',
-  createdBy: mockCredentials.user().principal.userEntityRef,
-  createdAt: new Date().toISOString(),
+const mockApplicationItem = {
+  ApplicationName: 'Application of test',
+  Technology: 'Technology of test',
 };
 
-// TEMPLATE NOTE:
-// Testing the router directly allows you to write a unit test that mocks the provided options.
+const invalidEntries = [
+  { ApplicationName: 'Application of test' },
+  { Technology: 'Technology of test' },
+  {ApplicationName: []},
+  {Technology: []},
+]
+
 describe('createRouter', () => {
   let app: express.Express;
-  let todoListService: jest.Mocked<TodoListService>;
+  let applicationService: jest.Mocked<ApplicationService>;
 
   beforeEach(async () => {
-    todoListService = {
-      createTodo: jest.fn(),
-      listTodos: jest.fn(),
-      getTodo: jest.fn(),
+
+    applicationService = {
+      listApplications: jest.fn(),
+      createApplication: jest.fn(),
     };
+
     const router = await createRouter({
-      httpAuth: mockServices.httpAuth(),
-      todoListService,
+      applicationService,
     });
+
     app = express();
     app.use(router);
     app.use(mockErrorHandler());
   });
 
-  it('should create a TODO', async () => {
-    todoListService.createTodo.mockResolvedValue(mockTodoItem);
+  it('should create a application: OK', async () => {
+    applicationService.createApplication.mockResolvedValue(mockApplicationItem);
 
-    const response = await request(app).post('/todos').send({
-      title: 'Do the thing',
-    });
+    const response = await request(app).post('/').send(mockApplicationItem);
 
     expect(response.status).toBe(201);
-    expect(response.body).toEqual(mockTodoItem);
+    expect(response.body).toEqual(mockApplicationItem);
   });
 
-  it('should not allow unauthenticated requests to create a TODO', async () => {
-    todoListService.createTodo.mockResolvedValue(mockTodoItem);
+  it.each(invalidEntries)('should not create a application with invalid input: BadRequest', async (entry) => {
+    const response = await request(app).post('/').send(entry);
 
-    // TEMPLATE NOTE:
-    // The HttpAuth mock service considers all requests to be authenticated as a
-    // mock user by default. In order to test other cases we need to explicitly
-    // pass an authorization header with mock credentials.
-    const response = await request(app)
-      .post('/todos')
-      .set('Authorization', mockCredentials.none.header())
-      .send({
-        title: 'Do the thing',
-      });
-
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(400);
   });
+
+  it('should list applications: OK', async () => {
+    applicationService.listApplications.mockResolvedValue([mockApplicationItem]);
+
+    const response = await request(app).get('/');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([mockApplicationItem]);
+  });
+
+  it('should not be possible to create an application with the same name: Conflict', async () => {
+    applicationService.createApplication.mockRejectedValue(new Error('Application with name Application of test already exists'));
+
+    const response = await request(app).post('/').send(mockApplicationItem);
+
+    expect(response.status).toBe(409);
+  });
+
 });

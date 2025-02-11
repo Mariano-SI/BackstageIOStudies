@@ -1,15 +1,7 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import api from '../api/api';
 
-/**
- * Creates an `acme:example` Scaffolder action.
- *
- * @remarks
- *
- * See {@link https://example.com} for more information.
- *
- * @public
- */
+
 export function createAzureBranchesAction() {
   return createTemplateAction<{
     organization: string;
@@ -34,7 +26,13 @@ export function createAzureBranchesAction() {
     async handler(ctx) {
       const { organization, project, repository, branchNames } = ctx.input;
       const azureRefsUrl = `/${organization}/${project}/_apis/git/repositories/${repository}/refs?api-version=7.1`;
+      const requiredFields = ['organization', 'project', 'repository', 'branchNames'];
+
       try {
+          if (!requiredFields.every((field) => ctx.input[field])) {
+            throw new Error('Missing required fields');
+          }
+
           const baseBranchResponse = await api.get(azureRefsUrl, {
             params: {
               filter: 'heads',

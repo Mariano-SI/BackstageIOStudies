@@ -40,7 +40,10 @@ export async function createRouter({
     };
 
     const result = await applicationService.createApplication(parsed.data);
-    res.status(201).json(result);
+    res.status(201).json({
+      status: 'Success',
+      Data: result
+    });
   });
 
   return router;

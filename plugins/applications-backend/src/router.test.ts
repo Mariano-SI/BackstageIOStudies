@@ -6,6 +6,7 @@ import request from 'supertest';
 
 import { createRouter } from './router';
 import {ApplicationService } from './services/ApplicationServices/types';
+import { ConflictError } from '@backstage/errors';
 
 const mockApplicationItem = {
   ApplicationName: 'Application of test',
@@ -17,7 +18,7 @@ const invalidEntries = [
   { Technology: 'Technology of test' },
   {ApplicationName: []},
   {Technology: []},
-]
+];
 
 describe('createRouter', () => {
   let app: express.Express;
@@ -45,7 +46,10 @@ describe('createRouter', () => {
     const response = await request(app).post('/').send(mockApplicationItem);
 
     expect(response.status).toBe(201);
-    expect(response.body).toEqual(mockApplicationItem);
+    expect(response.body).toEqual({
+      status: 'Success',
+      Data: mockApplicationItem
+    });
   });
 
   it.each(invalidEntries)('should not create a application with invalid input: BadRequest', async (entry) => {
@@ -64,7 +68,7 @@ describe('createRouter', () => {
   });
 
   it('should not be possible to create an application with the same name: Conflict', async () => {
-    applicationService.createApplication.mockRejectedValue(new Error('Application with name Application of test already exists'));
+    applicationService.createApplication.mockRejectedValue(new ConflictError('Application with name Application of test already exists'));
 
     const response = await request(app).post('/').send(mockApplicationItem);
 

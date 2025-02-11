@@ -47,7 +47,7 @@ describe('createRouter', () => {
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
-      status: 'Success',
+      Status: 'Success',
       Data: mockApplicationItem
     });
   });

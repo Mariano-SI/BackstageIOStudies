@@ -41,7 +41,7 @@ export async function createRouter({
 
     const result = await applicationService.createApplication(parsed.data);
     res.status(201).json({
-      status: 'Success',
+      Status: 'Success',
       Data: result
     });
   });

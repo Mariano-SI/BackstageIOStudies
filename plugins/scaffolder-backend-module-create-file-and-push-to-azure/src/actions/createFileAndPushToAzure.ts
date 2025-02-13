@@ -66,8 +66,15 @@ export function createCreateFileAndPushToAzureAction() {
     async handler(ctx) {
       const { fileName, fileContent, filePath, previousCommitHash, organization, project, repository, branchName } = ctx.input;
       const azureUrl = `/${organization}/${project}/_apis/git/repositories/${repository}/pushes?api-version=7.1`;
+      const requiredFields = ['fileName', 'fileContent', 'filePath', 'previousCommitHash', 'organization', 'project', 'repository', 'branchName'] ;
 
       try {
+        requiredFields.forEach((field) => {
+          if (!ctx.input[field]) {
+            throw new Error(`Missing required fields: ${field}`);
+          }
+        });
+        
         await azureDevopsApi.post(azureUrl, {
           refUpdates: [{ name: `refs/heads/${branchName}`, oldObjectId: previousCommitHash }],
           commits: [

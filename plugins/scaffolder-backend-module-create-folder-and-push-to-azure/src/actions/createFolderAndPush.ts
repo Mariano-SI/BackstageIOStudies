@@ -47,7 +47,15 @@ export function createCreateFolderAndPushToAzureAction() {
 
       const azureUrl = `/${organization}/${project}/_apis/git/repositories/${repository}/pushes?api-version=7.1`;
 
+      const requiredFields = ['folderName', 'organization', 'project', 'repository', 'previousCommitHash', 'branchName'];
+
       try {
+        requiredFields.forEach(field => {
+          if (!ctx.input[field]) {
+            throw new Error(`Required field ${field} is missing`);
+          }
+        });
+        
         const response = await azureDevopsApi.post(azureUrl, {
           refUpdates: [{ name: `refs/heads/${branchName}`, oldObjectId: previousCommitHash }],
           commits: [

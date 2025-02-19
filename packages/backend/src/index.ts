@@ -57,4 +57,5 @@ backend.add(import('@backstage/plugin-kubernetes-backend'));
 backend.add(import('backstage-plugin-scaffolder-backend-module-azure-branch-creator'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-create-folder-and-push-to-azure'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-create-file-and-push-to-azure'));
+backend.add(import('backstage-plugin-scaffolder-backend-module-azure-create-release-pipeline'));
 backend.start();

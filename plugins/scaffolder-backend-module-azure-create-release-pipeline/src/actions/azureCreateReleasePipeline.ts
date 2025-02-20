@@ -1,12 +1,11 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
-import createAzureApiConfig from '../../api/createAzureApiconfig'
+import createAzureApiConfig from '../../api/createAzureApiConfig'
 /* 
 Anotações:
- - talvez fosse interessante passar um parametro de source pipeline id opcional onde o usuário poderia escolher um pipeline já existente para ser usado como base para o novo pipeline. Caso esse parametro não seja passado, o pipeline seria criado do zero.
+ - talvez fosse interessante eu passar um parametro de source pipeline id opcional onde o usuário poderia escolher um pipeline já existente para ser usado como base para o novo pipeline. Caso esse parametro não seja passado, o pipeline seria criado do zero.
  - pensar em formas de tornar essa actions mais customizavel
-
-
 */
+
 export function azureCreateReleasePipeline() {
   return createTemplateAction<{
     organization: string;

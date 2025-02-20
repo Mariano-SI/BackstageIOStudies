@@ -68,15 +68,63 @@ export function azureCreateReleasePipeline() {
     },
     async handler(ctx) {
       const { organization, project, repository, mainBranch, pipelineName, sourcePipelineId } = ctx.input;
-      const azurePipelineDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
+      const azurePipelinesCreateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
+      const azurePipelinesGetDefinitionUrl = `/${organization}/${project}/_apis/release/definitions/${sourcePipelineId}?api-version=7.1`;
       const azureDevopsRepositiesUrl = `/${organization}/${project}/_apis/git/repositories/${repository}?api-version=7.1`;
       const azureDevopsApi = createAzureApiConfig(process.env.AZURE_DEVOPS_API_BASE_URL);
       const azureVSRMApi = createAzureApiConfig(process.env.AZURE_DEVOPS_VSRM_API_BASE_URL);
 
       try {
+
         const repositoryInfo = await azureDevopsApi.get(azureDevopsRepositiesUrl);
 
         ctx.logger.info(`Repository data: ${repositoryInfo.data}`,);
+
+        if(sourcePipelineId){
+          ctx.logger.info(`Creating a new release pipeline based on the source pipeline ${sourcePipelineId}`);
+          const sourcePipeline = await azureVSRMApi.get(azurePipelinesGetDefinitionUrl);
+
+          if(!sourcePipeline){
+            ctx.logger.error(`The source pipeline ${sourcePipelineId} was not found`);
+            throw new Error(`The source pipeline ${sourcePipelineId} was not found`);
+          }
+
+          const requestPayload = {
+            name: pipelineName,
+            environments: sourcePipeline.data.environments,
+            artifacts: [
+              {
+                alias: `_${repository}`,
+                type: "Git",
+                isRetained: false,
+                isPrimary: false,
+                definitionReference: {
+                  project: {
+                    id: repositoryInfo.data.project.id,
+                    name: repositoryInfo.data.project.name
+                  },
+                  definition: {
+                    id: repositoryInfo.data.id,
+                    name: repository
+                  },
+                  branches: {
+                    id: "",
+                    name: mainBranch
+                  }
+                }
+              }
+            ]
+          }
+
+          const createReleasePipelineResponse = await azureVSRMApi.post(azurePipelinesCreateDefinitionUrl, requestPayload);
+
+          ctx.output('createdPipelineId', createReleasePipelineResponse.data.id);
+          ctx.output('createdPipelineName', createReleasePipelineResponse.data.name);
+
+          ctx.logger.info(`Release pipeline created successfully`);
+
+          return;
+        }
         
         const requestPayload = {
           name: pipelineName,
@@ -191,7 +239,7 @@ export function azureCreateReleasePipeline() {
   
           ctx.logger.info(`Creating a new release pipeline`);
   
-          const createReleasePipelineResponse = await azureVSRMApi.post(azurePipelineDefinitionUrl, requestPayload);
+          const createReleasePipelineResponse = await azureVSRMApi.post(azurePipelinesCreateDefinitionUrl, requestPayload);
 
           ctx.output('createdPipelineId', createReleasePipelineResponse.data.id);
           ctx.output('createdPipelineName', createReleasePipelineResponse.data.name);

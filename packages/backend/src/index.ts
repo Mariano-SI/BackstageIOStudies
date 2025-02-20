@@ -58,4 +58,5 @@ backend.add(import('backstage-plugin-scaffolder-backend-module-azure-branch-crea
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-create-folder-and-push-to-azure'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-create-file-and-push-to-azure'));
 backend.add(import('backstage-plugin-scaffolder-backend-module-azure-create-release-pipeline'));
+backend.add(import('backstage-plugin-scaffolder-backend-module-azure-synchronize-release-pipelines'));
 backend.start();

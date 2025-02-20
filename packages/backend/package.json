@@ -46,6 +46,7 @@
     "app": "link:../app",
     "backstage-plugin-scaffolder-backend-module-azure-branch-creator": "^0.1.0",
     "backstage-plugin-scaffolder-backend-module-azure-create-release-pipeline": "^0.1.0",
+    "backstage-plugin-scaffolder-backend-module-azure-synchronize-release-pipelines": "^0.1.0",
     "better-sqlite3": "^9.0.0",
     "node-gyp": "^10.0.0",
     "pg": "^8.11.3"

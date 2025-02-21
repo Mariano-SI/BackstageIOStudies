@@ -1,6 +1,7 @@
 import { azureReleasePipelinesSynchronize } from './azureSynchronizeReleasePipelines';
 import {createMockActionContext} from '@backstage/plugin-scaffolder-node-test-utils'
 import azureVSRMApi from '../api/azureVSRMApi';
+
 jest.mock('../api/azureVSRMApi');
 
 describe('azureReleasePipelinesSynchronize', () => {

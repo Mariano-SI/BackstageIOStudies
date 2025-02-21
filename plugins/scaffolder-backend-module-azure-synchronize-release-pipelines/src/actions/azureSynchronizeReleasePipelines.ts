@@ -1,5 +1,5 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
-import createAzureApiConfig from "../../api/createAzureApiconfig"
+import azureVSRMApi from '../api/azureVSRMApi'
 
 export function azureReleasePipelinesSynchronize() {
   return createTemplateAction<{
@@ -40,7 +40,6 @@ export function azureReleasePipelinesSynchronize() {
     },
     async handler(ctx) {
       const { organization, project, sourcePipelineId, targetPipelineId } = ctx.input;
-      const azureVSRMApi = createAzureApiConfig(process.env.AZURE_DEVOPS_VSRM_API_BASE_URL);
       const azureDevopsUpdateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
 
       function getAzurePipelinesGetDefinitionUrl(pipelineId?: number){

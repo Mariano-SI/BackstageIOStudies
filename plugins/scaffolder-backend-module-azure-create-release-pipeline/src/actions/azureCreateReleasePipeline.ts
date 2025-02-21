@@ -1,10 +1,6 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
-import createAzureApiConfig from '../../api/createAzureApiConfig'
-/* 
-Anotações:
- - talvez fosse interessante eu passar um parametro de source pipeline id opcional onde o usuário poderia escolher um pipeline já existente para ser usado como base para o novo pipeline. Caso esse parametro não seja passado, o pipeline seria criado do zero.
- - pensar em formas de tornar essa actions mais customizavel
-*/
+import azureDevopsApi from '../api/azureDevopsApi';
+import azureVSRMApi from '../api/azureVSRMApi';
 
 export function azureCreateReleasePipeline() {
   return createTemplateAction<{
@@ -71,8 +67,7 @@ export function azureCreateReleasePipeline() {
       const azurePipelinesCreateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
       const azurePipelinesGetDefinitionUrl = `/${organization}/${project}/_apis/release/definitions/${sourcePipelineId}?api-version=7.1`;
       const azureDevopsRepositiesUrl = `/${organization}/${project}/_apis/git/repositories/${repository}?api-version=7.1`;
-      const azureDevopsApi = createAzureApiConfig(process.env.AZURE_DEVOPS_API_BASE_URL);
-      const azureVSRMApi = createAzureApiConfig(process.env.AZURE_DEVOPS_VSRM_API_BASE_URL);
+
 
       try {
 

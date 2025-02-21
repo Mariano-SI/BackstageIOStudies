@@ -1,4 +1,5 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
+import createAzureApiConfig from "../../api/createAzureApiconfig"
 
 export function azureReleasePipelinesSynchronize() {
   return createTemplateAction<{
@@ -6,34 +7,77 @@ export function azureReleasePipelinesSynchronize() {
     project: string;
     sourcePipelineId: number;
     targetPipelineId: number;
-    soucePipelineStage: string; // talvez eu nao vá precisar dessa parte de definir quais environments eu quero sincronizar, talvez eu possa sincronizar todos os environments
-    targetPipelineStage: string;
   }>({
     id: 'azure-devops:release-pipeline:synchronize',
-    description: 'Runs an example action',
+    description: 'This action synchronizes two Azure Devops pipelines by cloning all stages and actions from one to the other',
     schema: {
       input: {
         type: 'object',
-        required: ['myParameter'],
+        required: ['organization', 'project', 'sourcePipelineId', 'targetPipelineId'],
         properties: {
-          myParameter: {
-            title: 'An example parameter',
-            description: "This is an example parameter, don't set it to foo",
+          organization: {
+            title: 'Organization',
+            description: 'The Azure DevOps organization',
             type: 'string',
+          },
+          project:{
+            title: 'Project',
+            description: 'The Azure DevOps project',
+            type: 'string',
+          },
+          sourcePipelineId: {
+            title: 'Source Pipeline ID',
+            description: 'The ID of the source pipeline',
+            type: 'number',
+          },
+          targetPipelineId: {
+            title: 'Target Pipeline ID',
+            description: 'The ID of the target pipeline',
+            type: 'number',
           },
         },
       },
     },
     async handler(ctx) {
-      ctx.logger.info(
-        `Running example template with parameters: ${ctx.input.myParameter}`,
-      );
+      const { organization, project, sourcePipelineId, targetPipelineId } = ctx.input;
+      const azureVSRMApi = createAzureApiConfig(process.env.AZURE_DEVOPS_VSRM_API_BASE_URL);
+      const azureDevopsUpdateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
 
-      if (ctx.input.myParameter === 'foo') {
-        throw new Error(`myParameter cannot be 'foo'`);
+      function getAzurePipelinesGetDefinitionUrl(pipelineId?: number){
+        return `/${organization}/${project}/_apis/release/definitions/${pipelineId}?api-version=7.1`;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      try {
+        ctx.logger.info(`Getting source and target pipeline definitions`);
+        const [sourcePipelineDefinition, targetPipelineDefinition] = await Promise.all([
+          azureVSRMApi.get(getAzurePipelinesGetDefinitionUrl(sourcePipelineId)),
+          azureVSRMApi.get(getAzurePipelinesGetDefinitionUrl(targetPipelineId)),
+        ]);
+
+        if(!sourcePipelineDefinition.data || !targetPipelineDefinition.data){
+          throw new Error(`Could not find source or target pipeline with ID ${sourcePipelineId} or ${targetPipelineId}`);
+        }
+
+        targetPipelineDefinition.data.environments = sourcePipelineDefinition.data.environments.map((env) =>{
+          return {
+            ...env,
+            id: 0,
+          }
+        });
+
+        const updatePipelineDefinitionPayload = {
+          ...targetPipelineDefinition.data,
+          id: targetPipelineId, 
+          source: "restApi", 
+        };
+
+        ctx.logger.info(`Synchronizing target pipeline with source pipeline`);
+        await azureVSRMApi.put(azureDevopsUpdateDefinitionUrl, updatePipelineDefinitionPayload); 
+
+      } catch (error) {
+        ctx.logger.error(`Error synchronizing pipelines: ${error}`);
+        throw error;
+      }
     },
   });
 }

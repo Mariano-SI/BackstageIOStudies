@@ -135,3 +135,14 @@ kubernetes:
 permission:
   # setting this to `false` will disable permissions
   enabled: true
+
+plugins:
+  releaseManager:
+      dev:
+        message: Sou de Desenvolvimento
+      qa: 
+        message: Sou de QA
+      uat:
+        message: Sou de UAT
+      prod:
+        message: Sou de Prod

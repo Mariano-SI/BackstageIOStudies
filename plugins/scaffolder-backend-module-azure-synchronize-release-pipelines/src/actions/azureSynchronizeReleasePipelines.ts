@@ -1,7 +1,8 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import azureVSRMApi from '../api/azureVSRMApi'
+import { Config } from '@backstage/config';
 
-export function azureReleasePipelinesSynchronize() {
+export function azureReleasePipelinesSynchronize(config: Config) {
   return createTemplateAction<{
     organization: string;
     project: string;
@@ -42,6 +43,8 @@ export function azureReleasePipelinesSynchronize() {
       const { organization, project, sourcePipelineId, targetPipelineId } = ctx.input;
       const azureDevopsUpdateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
 
+      const releaseManagerConfig = config.get('plugins.releaseManager');
+
       function getAzurePipelinesGetDefinitionUrl(pipelineId?: number){
         return `/${organization}/${project}/_apis/release/definitions/${pipelineId}?api-version=7.1`;
       }
@@ -55,11 +58,26 @@ export function azureReleasePipelinesSynchronize() {
 
         if(!sourcePipelineDefinition.data || !targetPipelineDefinition.data){
           throw new Error(`Could not find source or target pipeline with ID ${sourcePipelineId} or ${targetPipelineId}`);
-        }
+        }  
 
-        targetPipelineDefinition.data.environments = sourcePipelineDefinition.data.environments.map((env) =>{
+        targetPipelineDefinition.data.environments = sourcePipelineDefinition.data.environments.map((environment) =>{
+
+          const compatibleEnvironment = releaseManagerConfig[environment.name.toLowerCase()];
+
+          if(compatibleEnvironment){
+            environment.deployPhases.forEach((deployPhase) => {
+              deployPhase.workflowTasks.forEach((workflowTask) => {
+                for (const enviromentConfig in compatibleEnvironment) {
+                  if(workflowTask.inputs[enviromentConfig]){
+                    workflowTask.inputs[enviromentConfig] = compatibleEnvironment[enviromentConfig];
+                  }
+                }
+              });
+            });
+          }
+
           return {
-            ...env,
+            ...environment,
             id: 0,
           }
         });

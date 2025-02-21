@@ -1,4 +1,4 @@
-import { createBackendModule } from "@backstage/backend-plugin-api";
+import { createBackendModule, coreServices } from "@backstage/backend-plugin-api";
 import { scaffolderActionsExtensionPoint  } from '@backstage/plugin-scaffolder-node/alpha';
 import { azureReleasePipelinesSynchronize } from "./actions/azureSynchronizeReleasePipelines";
 
@@ -8,10 +8,11 @@ export const scaffolderModule = createBackendModule({
   register({ registerInit }) {
     registerInit({
       deps: {
-        scaffolderActions: scaffolderActionsExtensionPoint
+        scaffolderActions: scaffolderActionsExtensionPoint,
+        config: coreServices.rootConfig,
       },
-      async init({ scaffolderActions}) {
-        scaffolderActions.addActions(azureReleasePipelinesSynchronize());
+      async init({ scaffolderActions, config}) {
+        scaffolderActions.addActions(azureReleasePipelinesSynchronize(config));
       }
     });
   },

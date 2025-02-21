@@ -106,7 +106,7 @@ catalog:
       target: ../../examples/template/template.yaml
       rules:
         - allow: [Template]
-
+    
     # Local example organizational data
     - type: file
       target: ../../examples/org.yaml

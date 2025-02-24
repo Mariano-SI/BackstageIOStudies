@@ -14649,6 +14649,7 @@ __metadata:
   dependencies:
     "@backstage/backend-plugin-api": "npm:^1.1.1"
     "@backstage/cli": "npm:^0.29.5"
+    "@backstage/config": "npm:^1.3.2"
     "@backstage/plugin-scaffolder-node": "npm:^0.6.3"
     "@backstage/plugin-scaffolder-node-test-utils": "npm:^0.1.18"
     axios: "npm:^1.7.9"
@@ -14661,6 +14662,7 @@ __metadata:
   dependencies:
     "@backstage/backend-plugin-api": "npm:^1.1.1"
     "@backstage/cli": "npm:^0.29.5"
+    "@backstage/config": "npm:^1.3.2"
     "@backstage/plugin-scaffolder-node": "npm:^0.6.3"
     "@backstage/plugin-scaffolder-node-test-utils": "npm:^0.1.18"
   languageName: unknown

@@ -43,8 +43,6 @@ export function azureReleasePipelinesSynchronize(config: Config) {
       const { organization, project, sourcePipelineId, targetPipelineId } = ctx.input;
       const azureDevopsUpdateDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.1`;
 
-      const releaseManagerConfig = config.get('plugins.releaseManager');
-
       function getAzurePipelinesGetDefinitionUrl(pipelineId?: number){
         return `/${organization}/${project}/_apis/release/definitions/${pipelineId}?api-version=7.1`;
       }
@@ -62,6 +60,7 @@ export function azureReleasePipelinesSynchronize(config: Config) {
 
         targetPipelineDefinition.data.environments = sourcePipelineDefinition.data.environments.map((environment) =>{
 
+          const releaseManagerConfig = config.get('plugins.releaseManager');
           const compatibleEnvironment = releaseManagerConfig[environment.name.toLowerCase()];
 
           if(compatibleEnvironment){

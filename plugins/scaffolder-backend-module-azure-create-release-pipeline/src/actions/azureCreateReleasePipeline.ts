@@ -1,8 +1,9 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import azureDevopsApi from '../api/azureDevopsApi';
 import azureVSRMApi from '../api/azureVSRMApi';
+import { Config } from '@backstage/config';
 
-export function azureCreateReleasePipeline() {
+export function azureCreateReleasePipeline(config: Config) {
   return createTemplateAction<{
     organization: string;
     project: string;
@@ -68,7 +69,6 @@ export function azureCreateReleasePipeline() {
       const azurePipelinesGetDefinitionUrl = `/${organization}/${project}/_apis/release/definitions/${sourcePipelineId}?api-version=7.1`;
       const azureDevopsRepositiesUrl = `/${organization}/${project}/_apis/git/repositories/${repository}?api-version=7.1`;
 
-
       try {
 
         const repositoryInfo = await azureDevopsApi.get(azureDevopsRepositiesUrl);
@@ -84,9 +84,28 @@ export function azureCreateReleasePipeline() {
             throw new Error(`The source pipeline ${sourcePipelineId} was not found`);
           }
 
+          const environments = sourcePipeline.data.environments.map((environment) => {
+            const releaseManagerConfig = config.get('plugins.releaseManager');
+            const compatibleEnvironment = releaseManagerConfig[environment.name.toLowerCase()];
+
+            if(compatibleEnvironment){
+              environment.deployPhases.forEach((deployPhase) => {
+                deployPhase.workflowTasks.forEach((workflowTask) => {
+                  for (const enviromentConfig in compatibleEnvironment) {
+                    if(workflowTask.inputs[enviromentConfig]){
+                      workflowTask.inputs[enviromentConfig] = compatibleEnvironment[enviromentConfig];
+                    }
+                  }
+                });
+              });
+            }
+
+            return environment;
+          });
+
           const requestPayload = {
             name: pipelineName,
-            environments: sourcePipeline.data.environments,
+            environments: environments,
             artifacts: [
               {
                 alias: `_${repository}`,

@@ -16,7 +16,6 @@ export async function createAzureDevopsServiceService({
       const listReposUrl = `/${organization}/${project}/_apis/git/repositories?api-version=7.2-preview.1`;
 
       const response = await azureDevopsApi.get(listReposUrl);
-      console.log("response",response.data)
 
       if (!response.data || !response.data.value) {
         throw new NotFoundError('Nenhum repositório encontrado');

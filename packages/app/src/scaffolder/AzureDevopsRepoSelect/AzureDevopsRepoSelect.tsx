@@ -9,14 +9,15 @@ export const AzureDevOpsRepoSelect = ({
   required,
   formData,
 }: FieldExtensionComponentProps<string>) => {
-  const [repos, setRepos] = useState<string[]>(['repo1', 'repo2']);
+  const [repos, setRepos] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const config = useApi(configApiRef);
+  const backendBaseUrl = config.data.backend.baseUrl;
 
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const response = await fetch();
+        const response = await fetch(`${backendBaseUrl}/api/azure-devops/marianobackstageorg/Backstage/repos`);
 
         if (!response.ok) {
           throw new Error(`Erro ao buscar repositórios: ${response.statusText}`);
@@ -24,7 +25,7 @@ export const AzureDevOpsRepoSelect = ({
 
         const data = await response.json();
 
-        const repoNames = data.value.map((repo: any) => (repo.name));
+        const repoNames = data.map((repo: any) => (repo.name));
 
         setRepos(repoNames);
       } catch (error) {
@@ -35,7 +36,7 @@ export const AzureDevOpsRepoSelect = ({
     };
 
     fetchRepos();
-  }, []);
+  }, [backendBaseUrl]);
 
   if(loading) return null;
   return (

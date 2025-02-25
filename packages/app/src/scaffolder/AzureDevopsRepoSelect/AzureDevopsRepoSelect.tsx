@@ -3,13 +3,20 @@ import { FieldExtensionComponentProps } from '@backstage/plugin-scaffolder-react
 import { MenuItem, TextField } from '@material-ui/core';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 
+export interface IRepository{
+  id: string;
+  name: string;
+  url: string;
+  defaultBranch: string;
+}
+
 export const AzureDevOpsRepoSelect = ({
   onChange,
   rawErrors,
   required,
   formData,
-}: FieldExtensionComponentProps<string>) => {
-  const [repos, setRepos] = useState<string[]>([]);
+}: FieldExtensionComponentProps<IRepository>) => {
+  const [repos, setRepos] = useState<IRepository[]>([]);
   const [loading, setLoading] = useState(true);
   const config = useApi(configApiRef);
   const backendBaseUrl = config.data.backend.baseUrl;
@@ -25,9 +32,15 @@ export const AzureDevOpsRepoSelect = ({
 
         const data = await response.json();
 
-        const repoNames = data.map((repo: any) => (repo.name));
-
-        setRepos(repoNames);
+        const repositories = data.map((repo: any) => ({
+          id: repo.id,
+          name: repo.name,
+          url: repo.url,
+          defaultBranch: repo.defaultBranch ? repo.defaultBranch.split('/').at(-1) : ''
+        }));
+        
+        console.log(repositories)
+        setRepos(repositories);
       } catch (error) {
         console.error('Erro ao buscar repositórios do Azure DevOps:', error);
       } finally {
@@ -46,13 +59,18 @@ export const AzureDevOpsRepoSelect = ({
             fullWidth
             required={required}
             error={rawErrors?.length > 0}
-            value={formData ?? ''} 
-            onChange={e => onChange(e.target.value)} 
+            value={formData ? formData.id : ''}
+            onChange={e => {
+              const selectedRepository = repos.find(repo => repo.id === e.target.value);
+              if (selectedRepository) {
+                onChange(selectedRepository);
+              }
+            }}
             label="Selecione um Repositório"
           >
             {repos.map(repo => (
-              <MenuItem key={repo} value={repo}>
-                {repo}
+              <MenuItem key={repo.id} value={repo.id}>
+                {repo.name}
               </MenuItem>
             ))}
           </TextField>

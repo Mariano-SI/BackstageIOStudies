@@ -12,6 +12,7 @@ export const AzureDevopsReleasePipelinesSelect = ({
   rawErrors,
   required,
   formData,
+  uiSchema,
 }: FieldExtensionComponentProps<IPipeline | null >) => {
   const [pipelines, setPipelines] = useState<IPipeline[]>([{
     id:1,
@@ -20,6 +21,7 @@ export const AzureDevopsReleasePipelinesSelect = ({
   const [loading, setLoading] = useState(true);
   const config = useApi(configApiRef);
   const backendBaseUrl = config.data.backend.baseUrl;
+  const label = uiSchema?.['ui:options']?.label || 'Selecione uma Pipeline';
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -63,7 +65,7 @@ export const AzureDevopsReleasePipelinesSelect = ({
           onChange(selectedPipeline);
         }
       }}
-      label="Selecione uma Pipeline"
+      label={label}
     >
       {pipelines.map(pipeline => (
         <MenuItem key={pipeline.id} value={pipeline.id}>

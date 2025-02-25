@@ -38,8 +38,9 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { githubAuthApiRef } from '@backstage/core-plugin-api';
 import { MyPluginPage } from '@internal/backstage-plugin-my-plugin';
-
-
+import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
+import { AzureDevOpsRepoSelectFieldExtension } from './scaffolder/AzureDevopsRepoSelect/extensions';
+import { AzureDevOpsReleasePipelinesSelectExtension } from './scaffolder/AzureDevopsReleasesPipelinesSelect/extensions';
 
 const app = createApp({
   apis,
@@ -100,7 +101,12 @@ const routes = (
         title: 'Pipelines',
         filter: entity => entity?.metadata?.tags?.includes('pipeline') ?? false,
       }
-    ]}/>} />
+    ]}/>} >
+      <ScaffolderFieldExtensions>
+        <AzureDevOpsRepoSelectFieldExtension/>
+        <AzureDevOpsReleasePipelinesSelectExtension/>
+      </ScaffolderFieldExtensions>
+    </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/catalog-import"

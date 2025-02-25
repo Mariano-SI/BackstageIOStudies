@@ -44,6 +44,7 @@
     "@internal/backstage-plugin-scaffolder-backend-module-create-file-and-push-to-azure": "^0.1.0",
     "@internal/backstage-plugin-scaffolder-backend-module-create-folder-and-push-to-azure": "^0.1.0",
     "app": "link:../app",
+    "backstage-plugin-azure-devops-backend": "^0.1.0",
     "backstage-plugin-scaffolder-backend-module-azure-branch-creator": "^0.1.0",
     "backstage-plugin-scaffolder-backend-module-azure-create-release-pipeline": "^0.1.0",
     "backstage-plugin-scaffolder-backend-module-azure-synchronize-release-pipelines": "^0.1.0",

@@ -31,6 +31,7 @@
     "@backstage/plugin-org": "^0.6.35",
     "@backstage/plugin-permission-react": "^0.4.30",
     "@backstage/plugin-scaffolder": "^1.27.4",
+    "@backstage/plugin-scaffolder-react": "^1.14.5",
     "@backstage/plugin-search": "^1.4.22",
     "@backstage/plugin-search-react": "^1.8.5",
     "@backstage/plugin-techdocs": "^1.12.1",

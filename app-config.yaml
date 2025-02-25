@@ -52,7 +52,6 @@ integrations:
     - host: dev.azure.com
       token: ${AZURE_DEVOPS_PAT}
 
-proxy:
   ### Example for how to add a proxy endpoint for the frontend.
   ### A typical reason to do this is to handle HTTPS and CORS for internal services.
   # endpoints:

@@ -24,7 +24,7 @@ export const AzureDevopsReleasePipelinesSelect = ({
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const response = await fetch(`${backendBaseUrl}/api/azure-devops/marianobackstageorg/Backstage/repos`);
+        const response = await fetch(`${backendBaseUrl}/api/azure-devops/marianobackstageorg/Backstage/release-pipelines`);
 
         if (!response.ok) {
           throw new Error(`Erro ao buscar repositórios: ${response.statusText}`);
@@ -32,7 +32,12 @@ export const AzureDevopsReleasePipelinesSelect = ({
 
         const data = await response.json();
 
-        const repoNames = data.map((repo: any) => (repo.name));
+        const formattedReleasePipelines = data.map((releasePipeline: any) => ({
+            id: releasePipeline.id,
+            name: releasePipeline.name
+        }));
+
+        setPipelines(formattedReleasePipelines);
 
       } catch (error) {
         console.error('Erro ao buscar repositórios do Azure DevOps:', error);

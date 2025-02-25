@@ -19,7 +19,7 @@ export async function createRouter({
 
   router.get('/:organization/:project/repos', async (req, res) => {
     const {organization, project} = req.params;
-    console.log(organization, project)
+
     const parsed = getRepos.safeParse(req.params);
     if (!parsed.success) {
       throw new InputError(parsed.error.toString());
@@ -29,6 +29,19 @@ export async function createRouter({
 
     res.status(201).json(result);
   });
+
+  router.get('/:organization/:project/release-pipelines', async (req, res) =>{
+    const {organization, project} = req.params;
+
+    const parsed = getRepos.safeParse(req.params);
+    if (!parsed.success) {
+      throw new InputError(parsed.error.toString());
+    }
+
+    const result = await azureDevopsService.listReleasePipelines(parsed.data);
+
+    res.status(200).json(result);
+  })
 
   return router;
 }

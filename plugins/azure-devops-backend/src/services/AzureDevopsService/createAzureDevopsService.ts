@@ -1,7 +1,8 @@
 import { LoggerService } from '@backstage/backend-plugin-api';
 import { NotFoundError } from '@backstage/errors';
-import { AzureDevopsService, Repo } from './types';
+import { AzureDevopsService, Repo, ReleasePipeline } from './types';
 import azureDevopsApi from '../../azureDevopsApi/azureDevopsApi';
+import azureVSRMApi from '../../azureDevopsApi/azureVSRMApi';
 
 export async function createAzureDevopsServiceService({
   logger,
@@ -22,6 +23,19 @@ export async function createAzureDevopsServiceService({
       }
 
       return response.data.value as Repo[];
+    },
+
+    async listReleasePipelines(input):Promise<ReleasePipeline[]> {
+      const {organization, project} = input;
+      const releasePipelinesDefinitionUrl = `/${organization}/${project}/_apis/release/definitions?api-version=7.2-preview.4`
+
+      const releasePipelines = await azureVSRMApi.get(releasePipelinesDefinitionUrl);
+
+      if (!releasePipelines.data || !releasePipelines.data.value) {
+        throw new NotFoundError('Nenhum repositório encontrado');
+      }
+
+      return releasePipelines.data.value as ReleasePipeline[]
     },
   }
 }

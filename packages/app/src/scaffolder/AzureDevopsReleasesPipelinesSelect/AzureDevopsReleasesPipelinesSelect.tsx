@@ -14,10 +14,7 @@ export const AzureDevopsReleasePipelinesSelect = ({
   formData,
   uiSchema,
 }: FieldExtensionComponentProps<IPipeline | null >) => {
-  const [pipelines, setPipelines] = useState<IPipeline[]>([{
-    id:1,
-    name:'teste'
-  }]);
+  const [pipelines, setPipelines] = useState<IPipeline[]>([]);
   const [loading, setLoading] = useState(true);
   const config = useApi(configApiRef);
   const backendBaseUrl = config.data.backend.baseUrl;

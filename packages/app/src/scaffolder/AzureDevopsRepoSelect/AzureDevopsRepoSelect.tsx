@@ -39,7 +39,6 @@ export const AzureDevOpsRepoSelect = ({
           defaultBranch: repo.defaultBranch ? repo.defaultBranch.split('/').at(-1) : ''
         }));
         
-        console.log(repositories)
         setRepos(repositories);
       } catch (error) {
         console.error('Erro ao buscar repositórios do Azure DevOps:', error);
@@ -54,26 +53,26 @@ export const AzureDevOpsRepoSelect = ({
   if(loading) return null;
   return (
     <div>
-          <TextField
-            select
-            fullWidth
-            required={required}
-            error={rawErrors?.length > 0}
-            value={formData ? formData.id : ''}
-            onChange={e => {
-              const selectedRepository = repos.find(repo => repo.id === e.target.value);
-              if (selectedRepository) {
-                onChange(selectedRepository);
-              }
-            }}
-            label="Selecione um Repositório"
-          >
-            {repos.map(repo => (
-              <MenuItem key={repo.id} value={repo.id}>
-                {repo.name}
-              </MenuItem>
-            ))}
-          </TextField>
+      <TextField
+        select
+        fullWidth
+        required={required}
+        error={rawErrors?.length > 0}
+        value={formData ? formData.id : ''}
+        onChange={e => {
+          const selectedRepository = repos.find(repo => repo.id === e.target.value);
+          if (selectedRepository) {
+            onChange(selectedRepository);
+          }
+        }}
+        label="Selecione um Repositório"
+      >
+        {repos.map(repo => (
+          <MenuItem key={repo.id} value={repo.id}>
+            {repo.name}
+          </MenuItem>
+        ))}
+      </TextField>
     </div>
   );
 };

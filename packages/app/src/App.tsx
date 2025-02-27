@@ -41,6 +41,7 @@ import { MyPluginPage } from '@internal/backstage-plugin-my-plugin';
 import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 import { AzureDevOpsRepoSelectFieldExtension } from './scaffolder/AzureDevopsRepoSelect/extensions';
 import { AzureDevOpsReleasePipelinesSelectExtension } from './scaffolder/AzureDevopsReleasesPipelinesSelect/extensions';
+import { RbacPage } from '@backstage-community/plugin-rbac';
 
 const app = createApp({
   apis,
@@ -107,6 +108,7 @@ const routes = (
         <AzureDevOpsReleasePipelinesSelectExtension/>
       </ScaffolderFieldExtensions>
     </Route>
+    <Route path="/rbac" element={<RbacPage />} />;
     <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/catalog-import"

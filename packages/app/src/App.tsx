@@ -41,6 +41,7 @@ import { MyPluginPage } from '@internal/backstage-plugin-my-plugin';
 import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 import { AzureDevOpsRepoSelectFieldExtension } from './scaffolder/AzureDevopsRepoSelect/extensions';
 import { AzureDevOpsReleasePipelinesSelectExtension } from './scaffolder/AzureDevopsReleasesPipelinesSelect/extensions';
+import { ScoreBoardPage } from '@oriflame/backstage-plugin-score-card';
 
 const app = createApp({
   apis,
@@ -81,6 +82,7 @@ const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="catalog" />} />
     <Route path="/catalog" element={<CatalogIndexPage />} />
+    <Route path="/score-board" element={<ScoreBoardPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"
       element={<CatalogEntityPage />}

@@ -27,6 +27,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import { MyGroupsSidebarItem } from '@backstage/plugin-org';
 import GroupIcon from '@material-ui/icons/People';
+import Score from '@material-ui/icons/Score';
 
 
 
@@ -82,6 +83,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarDivider />
         <SidebarScrollWrapper>
           {/* Items in this group will be scrollable if they run out of space */}
+          <SidebarItem icon={Score} to="score-board" text="Score board" />
         </SidebarScrollWrapper>
       </SidebarGroup>
       <SidebarSpace />

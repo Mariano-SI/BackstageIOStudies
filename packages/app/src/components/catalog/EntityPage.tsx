@@ -62,6 +62,7 @@ import {
 import { EntityGithubPullRequestsContent } from '@roadiehq/backstage-plugin-github-pull-requests';
 import { EntityGithubPullRequestsOverviewCard } from '@roadiehq/backstage-plugin-github-pull-requests';
 import { PluginComoComponente } from '@internal/backstage-plugin-plugin-como-componente';
+import { EntityScoreCardContent } from '@oriflame/backstage-plugin-score-card';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -367,6 +368,13 @@ const systemPage = (
         </Grid>
       </Grid>
     </EntityLayout.Route>
+    <EntityLayout.Route path="/score" title="Score">
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12}>
+          <EntityScoreCardContent />
+        </Grid>
+      </Grid>
+   </EntityLayout.Route>
     <EntityLayout.Route path="/diagram" title="Diagram">
       <EntityCatalogGraphCard
         variant="gridItem"
